@@ -1,30 +1,23 @@
-#include <coreclr/nethost.h>
+#include <yamp-sdk/include/yamp-sdk/sdk.h>
+#include "runtime.h"
 
-#include <coreclr/hostfxr.h>
-#include <coreclr/coreclr_delegates.h>
+SDK_Context GetRuntimeContext()
+{
+    SDK_Context ctx{};
 
-#ifdef _WIN32
-#include <Windows.h>
-#endif
+    ctx.version = "0.0.1";
+    ctx.sdkVersion = "0.0.1";
 
-hostfxr_initialize_for_runtime_config_fn init_for_config_fptr;
+    ctx.Init = dotnet::Init;
+    ctx.Shutdown = dotnet::Shutdown;
 
-bool load_hostfxr(const char_t *assembly_path) {
-    get_hostfxr_parameters params{ sizeof(get_hostfxr_parameters), assembly_path, nullptr };
-    
-    char_t buffer[260];
-    size_t buffer_size = sizeof(buffer) / sizeof(char_t);
+    ctx.OnTick = dotnet::OnTick;
 
-    int rc = get_hostfxr_path(buffer, &buffer_size, &params);
+    return ctx;
+}
 
-    if (rc != 0) {
-        return false;
-    }
-
-    #ifdef _WIN32
-    void *lib = (void*)LoadLibraryW(buffer);
-    init_for_config_fptr = (hostfxr_initialize_for_runtime_config_fn)GetProcAddress((HMODULE)lib, "hostfxr_initialize_for_runtime_config");
-    #endif
-
-    return init_for_config_fptr;
+SDK_EXPORT void RuntimeEntry(RegisterRuntime registerRuntime)
+{
+    dotnet::Runtime *runtime = dotnet::Runtime::Initialize(registerRuntime("dotnet", GetRuntimeContext()));
+    runtime->GetLogger().Info("[dotnet] Runtime registered");
 }

@@ -2,10 +2,10 @@ cmake_minimum_required(VERSION 3.31.6)
 
 project("v-dotnet-runtime" CXX)
 
-set(CMAKE_CXX_STANDARD 17)
+set(CMAKE_CXX_STANDARD 23)
 set(CMAKE_CXX_STANDARD_REQUIRED true)
 
-set(CMAKE_POSITION_INDEPENDENT_CODE ON)
+set(CMAKE_GENERATOR "Ninja" CACHE INTERNAL "" FORCE)
 
 if(UNIX)
     set(CMAKE_LIBRARY_OUTPUT_DIRECTORY ${PROJECT_SOURCE_DIR}/build/linux64/${CMAKE_BUILD_TYPE})
@@ -23,9 +23,11 @@ if(MSVC)
     set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} /EHsc")
 endif(MSVC)
 
-add_subdirectory(vendors/yamp-sdk)
-
+#add_subdirectory(vendors/yamp-sdk)
 include_directories(vendors)
+include_directories(vendors/yamp-sdk/include)
 
 file(GLOB_RECURSE PROJECT_SOURCE_FILES "src/*.h" "src/*.cpp")
-add_library(${PROJECT_NAME} STATIC ${PROJECT_SOURCE_FILES})
+add_library(${PROJECT_NAME} SHARED ${PROJECT_SOURCE_FILES}
+        src/netRuntimeHost.cpp
+        src/netRuntimeHost.h)

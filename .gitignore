@@ -1,4 +1,7 @@
 .vs/
+.idea/
+.vscode/
+
 build/
 bin/
 obj/
