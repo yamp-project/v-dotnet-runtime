@@ -28,6 +28,4 @@ include_directories(vendors)
 include_directories(vendors/yamp-sdk/include)
 
 file(GLOB_RECURSE PROJECT_SOURCE_FILES "src/*.h" "src/*.cpp")
-add_library(${PROJECT_NAME} SHARED ${PROJECT_SOURCE_FILES}
-        src/netRuntimeHost.cpp
-        src/netRuntimeHost.h)
+add_library(${PROJECT_NAME} SHARED ${PROJECT_SOURCE_FILES})

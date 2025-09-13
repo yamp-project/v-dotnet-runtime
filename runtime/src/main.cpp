@@ -3,17 +3,15 @@
 
 SDK_Context GetRuntimeContext()
 {
-    SDK_Context ctx{};
+    return {
+        .version = "0.0.1",
+        .sdkVersion = "0.0.1",
 
-    ctx.version = "0.0.1";
-    ctx.sdkVersion = "0.0.1";
+        .Init = dotnet::Init,
+        .Shutdown = dotnet::Shutdown,
 
-    ctx.Init = dotnet::Init;
-    ctx.Shutdown = dotnet::Shutdown;
-
-    ctx.OnTick = dotnet::OnTick;
-
-    return ctx;
+        .OnTick = dotnet::OnTick,
+    };
 }
 
 SDK_EXPORT void RuntimeEntry(RegisterRuntime registerRuntime)
