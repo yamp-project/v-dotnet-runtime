@@ -27,5 +27,9 @@ endif(MSVC)
 include_directories(vendors)
 include_directories(vendors/yamp-sdk/include)
 
+link_directories(${CMAKE_SOURCE_DIR}/lib)
+
 file(GLOB_RECURSE PROJECT_SOURCE_FILES "src/*.h" "src/*.cpp")
 add_library(${PROJECT_NAME} SHARED ${PROJECT_SOURCE_FILES})
+
+target_link_libraries(${PROJECT_NAME} nethost)

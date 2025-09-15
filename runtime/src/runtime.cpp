@@ -10,6 +10,7 @@ namespace dotnet
         runtime->GetLogger().Info("[dotnet] Runtime initializing");
 
         // dotnet init stuff...
+        runtime->InitializeNetRuntimeHost();
 
         return true;
     }
@@ -41,6 +42,11 @@ namespace dotnet
         sInstance = std::make_unique<Runtime>(sdkInt);
 
         return sInstance.get();
+    }
+
+    void Runtime::InitializeNetRuntimeHost()
+    {
+        this->mNetRuntimeHost = std::make_unique<NetRuntimeHost>();
     }
 
     void Runtime::Shutdown()

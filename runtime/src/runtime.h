@@ -7,6 +7,8 @@
 #include <cassert>
 #include <memory>
 
+#include "netRuntimeHost.h"
+
 namespace dotnet
 {
     bool Init();
@@ -33,10 +35,13 @@ namespace dotnet
             return mLogger;
         }
 
+        void InitializeNetRuntimeHost();
+
     private:
         static std::unique_ptr<Runtime> sInstance;
 
         SDK_Interface* mInterface = nullptr;
         Logger mLogger;
+        std::unique_ptr<NetRuntimeHost> mNetRuntimeHost;
     };
 }
