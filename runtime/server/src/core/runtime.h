@@ -25,6 +25,7 @@ namespace dotnet
         static void Shutdown();
 
         static bool InitializedNetHost();
+        static void ShutdownNetHost();
 
         explicit Runtime(SDK_Interface *lookupTable);
         ~Runtime() = default;

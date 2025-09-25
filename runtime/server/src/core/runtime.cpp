@@ -3,6 +3,7 @@
 namespace dotnet
 {
     std::unique_ptr<Runtime> Runtime::s_Instance = nullptr;
+    std::unique_ptr<NetHost> Runtime::s_NetHost = nullptr;
 
     bool Init()
     {
@@ -11,44 +12,51 @@ namespace dotnet
 
     void Shutdown()
     {
+        Runtime::Shutdown();
     }
 
     void OnResourceStart(SDK_Resource *resource)
     {
-        static auto *runtime = Runtime::GetInstance();
-        static auto *netHost = runtime->GetOrCreateNetHost();
+        assert(resource != nullptr);
+
+        auto *runtime = Runtime::GetInstance();
+        auto *netHost = runtime->GetOrCreateNetHost();
 
         netHost->OnResourceStart(resource);
     }
 
     void OnResourceStop(SDK_Resource *resource)
     {
-        static auto *runtime = Runtime::GetInstance();
-        static auto *netHost = runtime->GetOrCreateNetHost();
+        assert(resource != nullptr);
+
+        auto *runtime = Runtime::GetInstance();
+        auto *netHost = runtime->GetOrCreateNetHost();
 
         netHost->OnResourceStop(resource);
     }
 
     void OnTick()
     {
-        static auto *runtime = Runtime::GetInstance();
-        static auto *netHost = runtime->GetOrCreateNetHost();
+        auto *runtime = Runtime::GetInstance();
+        auto *netHost = runtime->GetOrCreateNetHost();
 
         netHost->OnTick();
     }
 
     void OnCoreEvent(CoreEventType type, CAnyArray *args)
     {
-        static auto *runtime = Runtime::GetInstance();
-        static auto *netHost = runtime->GetOrCreateNetHost();
+        auto *runtime = Runtime::GetInstance();
+        auto *netHost = runtime->GetOrCreateNetHost();
 
         netHost->OnCoreEvent(type, args);
     }
 
     void OnResourceEvent(const char *name, CAnyArray *args)
     {
-        static auto *runtime = Runtime::GetInstance();
-        static auto *netHost = runtime->GetOrCreateNetHost();
+        assert(name != nullptr);
+
+        auto *runtime = Runtime::GetInstance();
+        auto *netHost = runtime->GetOrCreateNetHost();
 
         netHost->OnResourceEvent(name, args);
     }
@@ -74,14 +82,23 @@ namespace dotnet
     {
         assert(s_Instance != nullptr);
 
+        ShutdownNetHost();
         s_Instance.reset();
     }
 
     bool Runtime::InitializedNetHost()
     {
         assert(s_Instance != nullptr);
-        assert(s_NetHost == nullptr);
 
-        return true;
+        return s_NetHost != nullptr;
+    }
+
+    void Runtime::ShutdownNetHost()
+    {
+        if (s_NetHost != nullptr)
+        {
+            s_NetHost->Shutdown();
+            s_NetHost.reset();
+        }
     }
 }; // namespace dotnet

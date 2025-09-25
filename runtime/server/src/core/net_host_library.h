@@ -10,6 +10,7 @@
 #include <cassert>
 #include <filesystem>
 
+#include "coreclr/nethost.h"
 #include "coreclr/hostfxr.h"
 #include "coreclr/coreclr_delegates.h"
 
@@ -19,7 +20,7 @@ namespace dotnet
     {
     public:
         explicit NetHostLibrary();
-        ~NetHostLibrary() = default;
+        ~NetHostLibrary();
 
         void Initialize();
         void InitializeHost(hostfxr_handle hostHandle);
@@ -32,7 +33,11 @@ namespace dotnet
         get_function_pointer_fn m_getFunctionPointer = nullptr;
 
     private:
-        std::unique_ptr<void> m_LibraryHandle;
+#ifdef _WIN32
+        HMODULE m_LibraryHandle = nullptr;
+#else
+        void *m_LibraryHandle = nullptr;
+#endif
 
         void *GetExport(const char *name)
         {
@@ -42,9 +47,9 @@ namespace dotnet
             }
 
 #ifdef _WIN32
-            return GetProcAddress(static_cast<HMODULE>(m_LibraryHandle.get()), name);
+            return GetProcAddress(m_LibraryHandle, name);
 #else
-            return dlsym(m_LibraryHandle.get(), name);
+            return dlsym(m_LibraryHandle, name);
 #endif
         }
     };

@@ -1,5 +1,7 @@
-#include <yamp-sdk/include/yamp-sdk/sdk.h>
-#include "runtime.h"
+#include <yamp-sdk/sdk.h>
+#include <cassert>
+
+#include "core/runtime.h"
 
 SDK_Context GetRuntimeContext()
 {
@@ -10,12 +12,20 @@ SDK_Context GetRuntimeContext()
         .Init = dotnet::Init,
         .Shutdown = dotnet::Shutdown,
 
+        .OnResourceStart = dotnet::OnResourceStart,
+        .OnResourceStop = dotnet::OnResourceStop,
         .OnTick = dotnet::OnTick,
+        .OnCoreEvent = dotnet::OnCoreEvent,
+        .OnResourceEvent = dotnet::OnResourceEvent,
     };
 }
 
 SDK_EXPORT void RuntimeEntry(RegisterRuntime registerRuntime)
 {
-    dotnet::Runtime *runtime = dotnet::Runtime::Initialize(registerRuntime("dotnet", GetRuntimeContext()));
-    runtime->GetLogger().Info("[dotnet] Runtime registered");
+    assert(registerRuntime != nullptr);
+
+    auto *lookupTable = registerRuntime("dotnet", GetRuntimeContext());
+    assert(lookupTable != nullptr);
+
+    dotnet::Runtime::Initialize(lookupTable);
 }

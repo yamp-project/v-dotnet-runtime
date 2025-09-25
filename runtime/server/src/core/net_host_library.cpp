@@ -6,17 +6,33 @@ namespace dotnet
     {
     }
 
+    NetHostLibrary::~NetHostLibrary()
+    {
+#ifdef _WIN32
+        if (m_LibraryHandle)
+        {
+            FreeLibrary(m_LibraryHandle);
+        }
+#else
+        if (m_LibraryHandle)
+        {
+            dlclose(m_LibraryHandle);
+        }
+#endif
+    }
+
     void NetHostLibrary::Initialize()
     {
         auto *hostFxrPath = GetHostFxrPath();
         assert(hostFxrPath != nullptr);
 
 #ifdef _WIN32
-        m_LibraryHandle = std::make_unique<void *>(LoadLibraryExA(hostFxrPath->c_str(), nullptr, 0));
+        m_LibraryHandle = LoadLibraryExA(hostFxrPath->c_str(), nullptr, 0);
+        assert(m_LibraryHandle != nullptr);
 #else
-        m_LibraryHandle = std::make_unique<void *>(dlopen(hostFxrPath->c_str(), RTLD_LAZY | RTLD_LOCAL));
+        m_LibraryHandle = dlopen(hostFxrPath->c_str(), RTLD_LAZY | RTLD_LOCAL);
+        assert(m_LibraryHandle != nullptr);
 #endif
-        assert(m_LibraryHandle.get() != nullptr);
 
         m_hostFxrInitialize = reinterpret_cast<hostfxr_initialize_for_dotnet_command_line_fn>(
             GetExport("hostfxr_initialize_for_dotnet_command_line"));
@@ -26,6 +42,11 @@ namespace dotnet
             GetExport("hostfxr_close"));
         m_getRuntimeDelegate = reinterpret_cast<hostfxr_get_runtime_delegate_fn>(
             GetExport("hostfxr_get_runtime_delegate"));
+
+        assert(m_hostFxrInitialize != nullptr);
+        assert(m_hostFxrRunApp != nullptr);
+        assert(m_hostFxrClose != nullptr);
+        assert(m_getRuntimeDelegate != nullptr);
     }
 
     void NetHostLibrary::InitializeHost(hostfxr_handle hostHandle)
@@ -40,6 +61,13 @@ namespace dotnet
 
     std::string *NetHostLibrary::GetHostFxrPath()
     {
+        static std::string cachedPath;
+
+        if (!cachedPath.empty())
+        {
+            return &cachedPath;
+        }
+
 #ifdef _WIN32
         const std::filesystem::path dotnetRoot = "C:/Program Files/dotnet/host/fxr";
 #else
@@ -69,9 +97,10 @@ namespace dotnet
         }
 
 #ifdef _WIN32
-        return &(dotnetRoot / latestVersion / "hostfxr.dll").string();
+        cachedPath = (dotnetRoot / latestVersion / "hostfxr.dll").string();
 #else
-        return &(dotnetRoot / latestVersion / "libhostfxr.so").string();
+        cachedPath = (dotnetRoot / latestVersion / "libhostfxr.so").string();
 #endif
+        return &cachedPath;
     }
 } // namespace dotnet

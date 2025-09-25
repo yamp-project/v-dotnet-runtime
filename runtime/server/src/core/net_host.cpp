@@ -14,14 +14,18 @@ namespace dotnet
         const char_t **argv = new const char_t *[1];
         argv[0] = CHAR_T_LITERAL("YAMP.Host.Server.dll");
 
-        m_Library->m_hostFxrInitialize(1, argv, nullptr, &(*m_HostHandle));
+        int result = m_Library->m_hostFxrInitialize(1, argv, nullptr, &(*m_HostHandle));
         delete[] argv;
+
+        assert(result == 0);
+        assert(m_HostHandle != nullptr);
 
         m_Library->InitializeHost(m_HostHandle.get());
 
         InitializeDelegates();
 
-        m_Library->m_hostFxrRunApp(m_HostHandle.get());
+        result = m_Library->m_hostFxrRunApp(m_HostHandle.get());
+        assert(result == 0);
     }
 
     void NetHost::InitializeDelegates()
@@ -54,15 +58,31 @@ namespace dotnet
 
     void NetHost::InitializeDelegate(const char_t *typeName, const char_t *methodName, void **delegatePtr)
     {
-        m_Library->m_getFunctionPointer(
+        int result = m_Library->m_getFunctionPointer(
             typeName,
             methodName,
             UNMANAGEDCALLERSONLY_METHOD, nullptr, nullptr,
             delegatePtr);
+
+        assert(result == 0);
+        assert(*delegatePtr != nullptr);
     }
 
     void NetHost::Shutdown()
     {
+        if (m_Library && m_HostHandle)
+        {
+            m_Library->m_hostFxrClose(*m_HostHandle);
+            m_HostHandle.reset();
+        }
+
+        m_resourceStartDelegate = nullptr;
+        m_resourceStopDelegate = nullptr;
+        m_tickDelegate = nullptr;
+        m_coreEventDelegate = nullptr;
+        m_resourceEventDelegate = nullptr;
+
+        m_Library.reset();
     }
 
     void NetHost::OnResourceStart(SDK_Resource *resource)
