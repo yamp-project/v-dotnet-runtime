@@ -1,6 +1,6 @@
-cmake_minimum_required(VERSION 3.31.6)
+cmake_minimum_required(VERSION 4.0.0)
 
-project("v-dotnet-runtime" CXX)
+project("v-dotnet-runtime")
 
 set(CMAKE_CXX_STANDARD 23)
 set(CMAKE_CXX_STANDARD_REQUIRED true)
@@ -23,13 +23,7 @@ if(MSVC)
     set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} /EHsc")
 endif(MSVC)
 
-#add_subdirectory(vendors/yamp-sdk)
-include_directories(vendors)
 include_directories(vendors/yamp-sdk/include)
 
-link_directories(${CMAKE_SOURCE_DIR}/lib)
-
-file(GLOB_RECURSE PROJECT_SOURCE_FILES "src/*.h" "src/*.cpp")
-add_library(${PROJECT_NAME} SHARED ${PROJECT_SOURCE_FILES})
-
-target_link_libraries(${PROJECT_NAME} nethost)
+add_subdirectory(client)
+add_subdirectory(server)
