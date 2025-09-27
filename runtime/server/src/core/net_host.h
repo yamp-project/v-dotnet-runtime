@@ -2,6 +2,7 @@
 
 #include <yamp-sdk/sdk.h>
 #include <memory>
+#include <filesystem>
 
 #include "net_host_library.h"
 
@@ -40,7 +41,7 @@ namespace dotnet
 
     private:
         std::unique_ptr<NetHostLibrary> m_Library;
-        std::unique_ptr<hostfxr_handle> m_HostHandle = nullptr;
+        std::shared_ptr<hostfxr_handle> m_HostHandle;
 
         resourceStartDelegate m_resourceStartDelegate = nullptr;
         resourceStopDelegate m_resourceStopDelegate = nullptr;

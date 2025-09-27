@@ -8,23 +8,30 @@ namespace dotnet
 
     void NetHost::Initialize()
     {
+        assert(std::filesystem::exists("YAMP.Host.Server.dll"));
+
         m_Library = std::make_unique<NetHostLibrary>();
         m_Library->Initialize();
 
         const char_t **argv = new const char_t *[1];
         argv[0] = CHAR_T_LITERAL("YAMP.Host.Server.dll");
 
-        int result = m_Library->m_hostFxrInitialize(1, argv, nullptr, &(*m_HostHandle));
+        hostfxr_handle rawHandle = nullptr;
+
+        int result = m_Library->m_hostFxrInitialize(1, argv, nullptr, &rawHandle);
         delete[] argv;
 
         assert(result == 0);
+
+        m_HostHandle = std::shared_ptr<hostfxr_handle>(new hostfxr_handle(rawHandle), [](hostfxr_handle *ptr)
+                                                       { delete ptr; });
         assert(m_HostHandle != nullptr);
 
-        m_Library->InitializeHost(m_HostHandle.get());
+        m_Library->InitializeHost(*m_HostHandle);
 
         InitializeDelegates();
 
-        result = m_Library->m_hostFxrRunApp(m_HostHandle.get());
+        result = m_Library->m_hostFxrRunApp(*m_HostHandle);
         assert(result == 0);
     }
 
