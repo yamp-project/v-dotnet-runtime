@@ -1,6 +1,6 @@
 ﻿namespace YAMP.Wrapper.Tasks;
 
-public class TickSynchronizationContext(TickTaskScheduler scheduler) : SynchronizationContext
+internal class TickSynchronizationContext(TickTaskScheduler scheduler) : SynchronizationContext
 {
     public override void Post(SendOrPostCallback callback, object? state)
     {

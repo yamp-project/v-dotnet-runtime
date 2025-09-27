@@ -2,7 +2,7 @@
 
 namespace YAMP.Wrapper.Tasks;
 
-public class TickTaskScheduler : TaskScheduler
+internal class TickTaskScheduler : TaskScheduler
 {
     private readonly ConcurrentQueue<Task> _tasks = new();
     private readonly int _mainThreadId = Thread.CurrentThread.ManagedThreadId;

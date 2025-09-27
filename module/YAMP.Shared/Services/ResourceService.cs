@@ -6,7 +6,7 @@ using YAMP.Shared.Structs;
 
 namespace YAMP.Shared.Services;
 
-public class ResourceService
+internal class ResourceService
 {
     private readonly List<IResource> _resources = new();
     public IReadOnlyList<IResource> Resources => _resources.AsReadOnly();

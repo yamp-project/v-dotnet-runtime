@@ -6,7 +6,7 @@ using YAMP.Wrapper.Tasks;
 
 namespace YAMP.Wrapper;
 
-public static class EntryPoint
+internal static class EntryPoint
 {
     private static readonly TickTaskScheduler Scheduler = new();
     private static readonly TickSynchronizationContext SyncContext = new(Scheduler);
