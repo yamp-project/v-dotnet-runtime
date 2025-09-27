@@ -3,7 +3,6 @@ using YAMP.Shared.Core;
 using YAMP.Shared.Interfaces;
 using YAMP.Wrapper.Core;
 using YAMP.Wrapper.Tasks;
-using YAMP.Wrapper.Writers;
 
 namespace YAMP.Wrapper;
 
@@ -43,8 +42,6 @@ public static class EntryPoint
 
         var resourceInstance = (YampResource?)Activator.CreateInstance(resourceType);
         Trace.Assert(resourceInstance is not null, "Failed to create an instance of the resource class.");
-
-        Console.SetOut(new InterceptWriter());
 
         resource.ResourceInfo = resourceInstance;
         resource.RegisterTick(Tick);

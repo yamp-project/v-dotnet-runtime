@@ -2,6 +2,7 @@
 using YAMP.Shared.Enums;
 using YAMP.Shared.Services;
 using YAMP.Shared.Structs;
+using YAMP.Shared.Writers;
 
 namespace YAMP.Host.Server;
 
@@ -12,6 +13,8 @@ internal static class Host
     private static void Main()
     {
         _resourceService = new ResourceService();
+
+        Console.SetOut(new InterceptWriter());
     }
 
     [UnmanagedCallersOnly]

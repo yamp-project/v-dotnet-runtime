@@ -1,8 +1,7 @@
-﻿using System.Diagnostics;
-using System.Text;
+﻿using System.Text;
 using YAMP.Shared.Core;
 
-namespace YAMP.Wrapper.Writers;
+namespace YAMP.Shared.Writers;
 
 public class InterceptWriter : TextWriter
 {
