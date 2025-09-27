@@ -48,6 +48,13 @@ public static class EntryPoint
 
         SynchronizationContext.SetSynchronizationContext(SyncContext);
 
-        resourceInstance.OnStart();
+        try
+        {
+            resourceInstance.OnStart();
+        }
+        catch (Exception ex)
+        {
+            SharedLibrary.LogError("Error during OnStart: " + ex);
+        }
     }
 }
