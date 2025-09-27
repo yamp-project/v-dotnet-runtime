@@ -40,7 +40,7 @@ namespace dotnet
             if (s_NetHost == nullptr)
             {
                 s_NetHost = std::make_unique<NetHost>();
-                s_NetHost->Initialize();
+                s_NetHost->Initialize(m_LookupTable);
             }
 
             return s_NetHost.get();

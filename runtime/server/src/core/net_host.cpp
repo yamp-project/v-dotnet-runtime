@@ -6,7 +6,7 @@ namespace dotnet
     {
     }
 
-    void NetHost::Initialize()
+    void NetHost::Initialize(SDK_Interface *lookupTable)
     {
         assert(std::filesystem::exists("YAMP.Host.Server.dll"));
 
@@ -30,6 +30,9 @@ namespace dotnet
         m_Library->InitializeHost(*m_HostHandle);
 
         InitializeDelegates();
+
+        m_sharedLibraryInitDelegate(lookupTable);
+        m_serverLibraryInitDelegate(lookupTable);
 
         result = m_Library->m_hostFxrRunApp(*m_HostHandle);
         assert(result == 0);
@@ -61,6 +64,16 @@ namespace dotnet
             CHAR_T_LITERAL("YAMP.Host.Server.Host, YAMP.Host.Server"),
             CHAR_T_LITERAL("OnResourceEvent"),
             reinterpret_cast<void **>(&m_resourceEventDelegate));
+
+        InitializeDelegate(
+            CHAR_T_LITERAL("YAMP.Shared.Core.SharedLibrary, YAMP.Shared"),
+            CHAR_T_LITERAL("InitializeLibrary"),
+            reinterpret_cast<void **>(&m_sharedLibraryInitDelegate));
+
+        InitializeDelegate(
+            CHAR_T_LITERAL("YAMP.Shared.Core.ServerLibrary, YAMP.Shared"),
+            CHAR_T_LITERAL("InitializeLibrary"),
+            reinterpret_cast<void **>(&m_serverLibraryInitDelegate));
     }
 
     void NetHost::InitializeDelegate(const char_t *typeName, const char_t *methodName, void **delegatePtr)

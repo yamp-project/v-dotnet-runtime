@@ -21,6 +21,7 @@ typedef void (*resourceStopDelegate)(SDK_Resource *resource);
 typedef void (*tickDelegate)();
 typedef void (*coreEventDelegate)(CoreEventType type, CAnyArray *args);
 typedef void (*resourceEventDelegate)(const char *name, CAnyArray *args);
+typedef void (*libraryInitDelegate)(SDK_Interface *lookupTable);
 
 namespace dotnet
 {
@@ -30,7 +31,7 @@ namespace dotnet
         explicit NetHost();
         ~NetHost() = default;
 
-        void Initialize();
+        void Initialize(SDK_Interface *lookupTable);
         void Shutdown();
 
         void OnResourceStart(SDK_Resource *resource);
@@ -48,6 +49,8 @@ namespace dotnet
         tickDelegate m_tickDelegate = nullptr;
         coreEventDelegate m_coreEventDelegate = nullptr;
         resourceEventDelegate m_resourceEventDelegate = nullptr;
+        libraryInitDelegate m_sharedLibraryInitDelegate = nullptr;
+        libraryInitDelegate m_serverLibraryInitDelegate = nullptr;
 
         void InitializeDelegates();
         void InitializeDelegate(const char_t *typeName, const char_t *methodName, void **delegatePtr);
