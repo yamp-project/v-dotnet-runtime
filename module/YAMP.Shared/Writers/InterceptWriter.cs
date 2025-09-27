@@ -1,11 +1,29 @@
 ﻿using System.Text;
 using YAMP.Shared.Core;
+using YAMP.Shared.Enums;
 
 namespace YAMP.Shared.Writers;
 
-public class InterceptWriter : TextWriter
+public class InterceptWriter(LogLevel logLevel) : TextWriter
 {
     public override Encoding Encoding => Encoding.UTF8;
+
+    private void Log(string message)
+    {
+        switch (logLevel)
+        {
+            case LogLevel.Error:
+            {
+                SharedLibrary.LogError(message);
+                break;
+            }
+            default:
+            {
+                SharedLibrary.LogInfo(message);
+                break;
+            }
+        }
+    }
 
     public override void WriteLine(string? value)
     {
@@ -14,7 +32,7 @@ public class InterceptWriter : TextWriter
             return;
         }
 
-        SharedLibrary.LogInfo(value);
+        Log(value);
     }
 
     public override void Write(string? value)
@@ -24,6 +42,6 @@ public class InterceptWriter : TextWriter
             return;
         }
 
-        SharedLibrary.LogInfo(value);
+        Log(value);
     }
 }

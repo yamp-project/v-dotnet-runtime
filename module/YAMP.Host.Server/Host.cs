@@ -1,4 +1,6 @@
-﻿using System.Runtime.InteropServices;
+﻿using System.Diagnostics;
+using System.Runtime.InteropServices;
+using YAMP.Host.Server.Handler;
 using YAMP.Shared.Enums;
 using YAMP.Shared.Services;
 using YAMP.Shared.Structs;
@@ -14,7 +16,10 @@ internal static class Host
     {
         _resourceService = new ResourceService();
 
-        Console.SetOut(new InterceptWriter());
+        Console.SetOut(new InterceptWriter(LogLevel.Info));
+        Console.SetError(new InterceptWriter(LogLevel.Error));
+
+        ExceptionHandler.SetupExceptionHandling();
     }
 
     [UnmanagedCallersOnly]
