@@ -1,5 +1,8 @@
 ﻿using YAMP.Shared.Core;
+using YAMP.Shared.Enums;
+using YAMP.Shared.Implementations;
 using YAMP.Shared.Interfaces;
+using YAMP.Shared.Services;
 
 namespace YAMP.Wrapper.Core;
 
@@ -31,7 +34,7 @@ public static class Yamp
     {
         SharedLibrary.LogError(message);
     }
-    
+
     public static void RegisterCoreEvent(CoreEventType type, Delegate coreEventAction)
     {
         var coreEvent = new RegisteredCoreEvent { CoreEventAction = coreEventAction };

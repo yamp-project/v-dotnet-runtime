@@ -1,7 +1,7 @@
-﻿using System.Diagnostics;
-using System.Runtime.InteropServices;
+﻿using System.Runtime.InteropServices;
 using YAMP.Host.Server.Handler;
 using YAMP.Shared.Enums;
+using YAMP.Shared.Implementations;
 using YAMP.Shared.Services;
 using YAMP.Shared.Structs;
 using YAMP.Shared.Writers;
@@ -55,6 +55,9 @@ internal static class Host
     private static unsafe void OnCoreEvent(CoreEventType type, CAnyArray* argsPtr)
     {
         var args = Marshal.PtrToStructure<CAnyArray>((IntPtr)argsPtr);
+        var parsedArgs = CArgParser.ParseArguments(args);
+
+        EventService.TriggerCoreEvent(type, parsedArgs);
     }
 
     [UnmanagedCallersOnly]
@@ -62,5 +65,6 @@ internal static class Host
     {
         var name = Marshal.PtrToStringAnsi((IntPtr)namePtr);
         var args = Marshal.PtrToStructure<CAnyArray>((IntPtr)argsPtr);
+        var parsedArgs = CArgParser.ParseArguments(args);
     }
 }
