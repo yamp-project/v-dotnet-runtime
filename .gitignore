@@ -5,3 +5,5 @@
 build/
 bin/
 obj/
+
+*.DotSettings.user
