@@ -31,4 +31,16 @@ public static class Yamp
     {
         SharedLibrary.LogError(message);
     }
+    
+    public static void RegisterCoreEvent(CoreEventType type, Delegate coreEventAction)
+    {
+        var coreEvent = new RegisteredCoreEvent { CoreEventAction = coreEventAction };
+
+        EventService.RegisterCoreEvent(type, coreEvent);
+    }
+
+    public static void ScanClassInstanceAttributes(object instance)
+    {
+        AttributeService.ScanClassInstanceAttributes(instance);
+    }
 }
