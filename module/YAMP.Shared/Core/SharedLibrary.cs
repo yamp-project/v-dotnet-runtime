@@ -84,8 +84,23 @@ internal static class SharedLibrary
         }
     }
 
-    public static void LogDebug(string message) => LogDebug(message, []);
-    public static void LogInfo(string message) => LogInfo(message, []);
-    public static void LogWarn(string message) => LogWarn(message, []);
-    public static void LogError(string message) => LogError(message, []);
+    public static void LogDebug(string message)
+    {
+        LogDebug(message, []);
+    }
+
+    public static void LogInfo(string message)
+    {
+        LogInfo(message, []);
+    }
+
+    public static void LogWarn(string message)
+    {
+        LogWarn(message, []);
+    }
+
+    public static void LogError(string message)
+    {
+        LogError(message, []);
+    }
 }
